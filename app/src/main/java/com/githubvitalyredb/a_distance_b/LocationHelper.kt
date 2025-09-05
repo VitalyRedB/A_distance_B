@@ -5,28 +5,35 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Looper
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.Granularity
 
 class LocationHelper(private val context: Context, private val activity: Activity) {
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
+    private var locationCallback: LocationCallback? = null
 
-    // Callback-интерфейс для передачи координат обратно в MainActivity
-    interface LocationCallback {
+    // Интерфейс для передачи координат обратно в MainActivity
+    // Я переименовал его, чтобы избежать конфликта с LocationCallback из Google Play Services
+    interface OnLocationReceivedCallback {
         fun onLocationReceived(location: Location)
     }
 
-    fun requestLocation(callback: LocationCallback) {
+    fun startLocationUpdates(callback: OnLocationReceivedCallback) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Если разрешения нет, запрашиваем его у пользователя
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -36,13 +43,27 @@ class LocationHelper(private val context: Context, private val activity: Activit
             return
         }
 
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                // Передаем полученные координаты через callback-интерфейс
-                callback.onLocationReceived(location)
-            } else {
-                Toast.makeText(context, "Не удалось получить местоположение. Попробуйте снова.", Toast.LENGTH_SHORT).show()
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+            .setGranularity(Granularity.GRANULARITY_FINE)
+            .setMinUpdateIntervalMillis(2000)
+            .build()
+
+        // Теперь мы используем LocationCallback из Google Play Services
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult.lastLocation?.let {
+                    // И передаем данные в наш собственный колбэк
+                    callback.onLocationReceived(it)
+                }
             }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback!!, Looper.getMainLooper())
+    }
+
+    fun stopLocationUpdates() {
+        locationCallback?.let {
+            fusedLocationClient.removeLocationUpdates(it)
         }
     }
 
