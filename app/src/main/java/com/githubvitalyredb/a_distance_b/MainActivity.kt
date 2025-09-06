@@ -7,8 +7,6 @@ import android.widget.ImageView
 import android.media.MediaPlayer
 import android.location.Location
 import android.widget.TextView
-import android.widget.Toast
-import com.githubvitalyredb.a_distance_b.LocationHelper
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,11 +40,13 @@ class MainActivity : AppCompatActivity() {
 
         // Применяем анимацию к кнопке Point A
         imageButtonAnimator.setAnimation(buttonA_Image) {
-            playSound(R.raw.click_sound)
+            playSound(R.raw.data_sound)
+            locationATextView.text = "Please wait!"
             // ИСПОЛЬЗУЕМ НОВЫЙ МЕТОД и ПРАВИЛЬНОЕ ИМЯ ИНТЕРФЕЙСА
             locationHelper.startLocationUpdates(object : LocationHelper.OnLocationReceivedCallback {
                 override fun onLocationReceived(location: Location) {
                     locationA = location
+                    playSound(R.raw.click_sound)
                     locationATextView.text = "Lat: ${String.format("%.4f", location.latitude)}, Lon: ${String.format("%.4f", location.longitude)}"
                     calculateDistance()
                     locationHelper.stopLocationUpdates() // Важно: останавливаем обновления после получения данных
@@ -56,11 +56,13 @@ class MainActivity : AppCompatActivity() {
 
         // Применяем анимацию к кнопке Point B
         imageButtonAnimator.setAnimation(buttonB_Image) {
-            playSound(R.raw.click_sound)
+            playSound(R.raw.data_sound)
+            locationBTextView.text = "Please wait!"
             // ИСПОЛЬЗУЕМ НОВЫЙ МЕТОД и ПРАВИЛЬНОЕ ИМЯ ИНТЕРФЕЙСА
             locationHelper.startLocationUpdates(object : LocationHelper.OnLocationReceivedCallback {
                 override fun onLocationReceived(location: Location) {
                     locationB = location
+                    playSound(R.raw.click_sound)
                     locationBTextView.text = "Lat: ${String.format("%.4f", location.latitude)}, Lon: ${String.format("%.4f", location.longitude)}"
                     calculateDistance()
                     locationHelper.stopLocationUpdates() // Важно: останавливаем обновления после получения данных
