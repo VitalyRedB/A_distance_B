@@ -8,6 +8,10 @@ import android.media.MediaPlayer
 import android.location.Location
 import android.widget.TextView
 
+// Импортируем GpsTrackerManager
+import  com.githubvitalyredb.a_distance_b.GpsTrackerManager
+
+
 class MainActivity : AppCompatActivity() {
 
     private var backgroundMusicPlayer: MediaPlayer? = null
@@ -22,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var distanceTextView: TextView
     // Создаем экземпляр нашего класса для анимации
     private lateinit var imageButtonAnimator: ImageButtonAnimator
+    // НОВАЯ ПЕРЕМЕННАЯ для отправки данных
+    private lateinit var gpsTrackerManager: GpsTrackerManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +44,13 @@ class MainActivity : AppCompatActivity() {
         locationHelper = LocationHelper(this, this)
         imageButtonAnimator = ImageButtonAnimator()
 
+        // НОВАЯ ИНИЦИАЛИЗАЦИЯ: GpsTrackerManager
+        // !!! ВАЖНО: ЗАМЕНИТЕ "SECRET123" НА ВАШ РЕАЛЬНЫЙ ТОКЕН !!!
+        gpsTrackerManager = GpsTrackerManager(
+            token = "SECRET123",
+            userId = "a_distance_b_app" // Уникальный ID приложения
+        )
+
         // Применяем анимацию к кнопке Point A
         imageButtonAnimator.setAnimation(buttonA_Image) {
             playSound(R.raw.data_sound)
@@ -49,6 +62,13 @@ class MainActivity : AppCompatActivity() {
                     playSound(R.raw.click_sound)
                     locationATextView.text = "Lat: ${String.format("%.4f", location.latitude)}, Lon: ${String.format("%.4f", location.longitude)}"
                     calculateDistance()
+
+                    // ОТПРАВКА ДАННЫХ ДЛЯ POINT A
+                    gpsTrackerManager.sendGpsPoint(
+                        lat = location.latitude,
+                        lon = location.longitude,
+                        pointId = "PointA" )
+
                     locationHelper.stopLocationUpdates() // Важно: останавливаем обновления после получения данных
                 }
             })
@@ -65,6 +85,13 @@ class MainActivity : AppCompatActivity() {
                     playSound(R.raw.click_sound)
                     locationBTextView.text = "Lat: ${String.format("%.4f", location.latitude)}, Lon: ${String.format("%.4f", location.longitude)}"
                     calculateDistance()
+
+                    // ОТПРАВКА ДАННЫХ ДЛЯ POINT В
+                    gpsTrackerManager.sendGpsPoint(
+                        lat = location.latitude,
+                        lon = location.longitude,
+                        pointId = "PointВ" )
+
                     locationHelper.stopLocationUpdates() // Важно: останавливаем обновления после получения данных
                 }
             })
