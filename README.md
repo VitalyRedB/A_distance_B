@@ -1,50 +1,72 @@
-# A_distance_B
-A simple Android application designed to calculate the distance between two geographical points using a device's GPS. The app features a clean user interface with animated buttons and background music.
+A_distance_B
 
-Features
+A simple Android application designed to calculate the distance between two geographical points using a device's GPS. The app has been extended to transmit tracking data to a remote server, laying the groundwork for a fully functional tracking service.
 
-    GPS Location Tracking: Get real-time geographical coordinates for two distinct points (A and B).
+✨ Features
 
-    Distance Calculation: Accurately calculate the distance in meters between the two recorded points.
+    Server Point Tracking (NEW): When Point A or B coordinates are recorded, the data is immediately sent to a remote API server for centralized storage and future route analysis.
 
-    Responsive UI: The layout is designed to be proportional and visually consistent across various Android screen sizes and densities.
+    GPS Location Tracking: Gets real-time geographical coordinates for two distinct points (A and B).
 
-    Animated Elements: Interactive image buttons that respond to touch with a smooth scaling animation.
+    Distance Calculation: Accurately calculates the distance in meters between the two recorded points.
 
-    Background Audio: A subtle, looping audio track to enhance the user experience.
+    Responsive UI: The layout is proportional and visually consistent across various Android screen sizes.
 
-    Modular Codebase: The project is structured with separate classes for location services (LocationHelper.kt), button animations (ImageButtonAnimator.kt), and UI logic (MainActivity.kt) for easy maintenance and scalability.
+    Animated Elements: Interactive image buttons respond to touch with smooth scaling animation.
 
-Project Structure
+    Modular Codebase: The project is structured with a clear separation of concerns for easy maintenance and scaling.
 
-    MainActivity.kt: Handles UI logic, event listeners, and coordinates the flow of the application.
+🛠️ Technologies Used
+
+    Language: Kotlin
+
+    Location Services: Google Play Services Location (play-services-location)
+
+    Networking: OkHttp (for performing asynchronous POST requests to the API)
+
+    JSON Serialization: Gson (for converting data objects into JSON format)
+
+    Audio: MediaPlayer
+
+    Code Management: git (using a PAT for secure authentication)
+
+📂 Project Structure (New Modules Added)
+
+    MainActivity.kt: Handles UI logic, event listeners, and application flow coordination.
 
     LocationHelper.kt: A helper class dedicated to requesting GPS permissions and retrieving location data.
 
-    ImageButtonAnimator.kt: A reusable class for handling button touch animations.
+    GpsTrackerManager.kt: (NEW MODULE) Handles JSON formatting and sending data to the remote server.
 
-    res/layout/activity_main.xml: The main layout file defining the app's user interface.
+    DataModels.kt & Utils.kt: (NEW FILES) Contain data models (data class) for network requests and helper functions for date/time formatting.
 
-    res/anim/scale_animation.xml: XML file defining the scaling animation for the developer information image.
+    ImageButtonAnimator.kt: Reusable class for handling button touch animations.
 
-    res/raw/: Directory for storing audio assets (background_music.mp3, click_sound.mp3).
+🚀 Getting Started
 
-Getting Started
+To run this project, clone the repository and open it in Android Studio.
 
-To run this project, clone the repository and open it in Android Studio. Ensure you have the Google Play Services location library added to your build.gradle file.
-```
-  dependencies {
-      implementation 'com.google.android.gms:play-services-location:21.0.1'
-  }
-```
-The app requires the following permissions, which must be declared in AndroidManifest.xml:
-```XML
+Dependencies (build.gradle)
 
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-```
-Author
+The project requires the following dependencies for location and network functionality:
+Gradle
 
-https://github.com/VitalyRedB
+dependencies {
+    // ...
+    
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0' 
+    implementation 'com.google.code.gson:gson:2.10.1' 
+}
 
+Permissions (AndroidManifest.xml)
+
+Location and Internet access permissions are required::
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+
+P.S. "Ось така ху.ня Малята! д.Панас"
  
